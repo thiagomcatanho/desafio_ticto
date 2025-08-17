@@ -21,7 +21,7 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $employees = $this->userService->listEmployees($request->input('search'));
+        $employees = $this->userService->listEmployees($request->query('search'));
 
         return view('admin.employee.index', compact('employees'));
     }
