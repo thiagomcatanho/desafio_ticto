@@ -66,7 +66,7 @@ class UserService extends BaseService
     /**
      * Find an employee by ID or fail with a ModelNotFoundException.
      */
-    protected function findEmployeeOrFail(int $userId): User
+    public function findEmployeeOrFail(int $userId): User
     {
         $employee = $this->repository->findOrFail($userId);
 
