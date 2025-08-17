@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRoles;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,19 +25,29 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'password' => static::$password ??= Hash::make('password'),
+            'name'        => $this->faker->name(),
+            'document'    => $this->faker->numerify('###########'),
+            'email'       => $this->faker->unique()->safeEmail(),
+            'password'    => Hash::make('password'),
+            'role'        => $this->faker->randomElement([UserRoles::ADMIN, UserRoles::EMPLOYEE]),
+            'position'    => $this->faker->jobTitle(),
+            'birth_date'  => $this->faker->date('Y-m-d', '-20 years'),
+            'zip_code'    => $this->faker->numerify('########'),
+            'street'      => $this->faker->streetName(),
+            'number'      => $this->faker->buildingNumber(),
+            'neighborhood' => $this->faker->citySuffix(),
+            'city'        => $this->faker->city(),
+            'state'       => $this->faker->stateAbbr(),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function admin()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->state(fn() => ['role' => UserRoles::ADMIN]);
+    }
+
+    public function employee()
+    {
+        return $this->state(fn() => ['role' => UserRoles::EMPLOYEE]);
     }
 }
