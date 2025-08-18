@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\UserRoles;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -137,5 +138,45 @@ class User extends Authenticatable
     public function isEmployee(): bool
     {
         return $this->role === UserRoles::EMPLOYEE;
+    }
+
+    /**
+     * Get all time records associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function timeRecord(): HasMany
+    {
+        return $this->hasMany(TimeRecord::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the admin(s) associated with the employee.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function admin()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'user_admins',
+            'employee_id',
+            'admin_id'
+        );
+    }
+
+    /**
+     * Get the employees managed by the admin.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function employees()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'user_admins',
+            'admin_id',
+            'employee_id'
+        );
     }
 }
