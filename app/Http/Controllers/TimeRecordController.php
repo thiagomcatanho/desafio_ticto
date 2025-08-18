@@ -20,7 +20,7 @@ class TimeRecordController extends Controller
         $this->timeService->storeTimeRecord(Auth::id());
 
         return redirect()->back()
-            ->with('status', __('messages.time_record_store_successfully'))
+            ->with('status', __('messages.time_record_stored_successfully'))
             ->with('status_type', 'success');
     }
 }
