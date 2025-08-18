@@ -80,12 +80,12 @@ class UserRepository extends BaseRepository
         ";
 
         if ($dto->dateBegin) {
-            $conditions[] = "tr.created_at >= ?";
+            $conditions[] = "DATE(tr.created_at) >= ?";
             $bindings[] = $dto->dateBegin;
         }
 
         if ($dto->dateEnd) {
-            $conditions[] = "tr.created_at <= ?";
+            $conditions[] = "DATE(tr.created_at) <= ?";
             $bindings[] = $dto->dateEnd;
         }
 
