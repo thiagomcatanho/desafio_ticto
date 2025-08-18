@@ -10,7 +10,7 @@
 
 - PHP 
 - Laravel
-- Docker & Laravel Sail
+- Docker
 
 ---
 
