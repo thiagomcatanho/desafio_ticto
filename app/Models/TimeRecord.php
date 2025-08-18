@@ -12,6 +12,11 @@ class TimeRecord extends Model
         'user_id',
     ];
 
+    /**
+     * Get user associeted with this time record.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
