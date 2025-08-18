@@ -1,28 +1,41 @@
 @extends('layouts.app')
 
-@section('title', 'Listagem de Funcionarios')
+@section('title', 'Listagem de Funcionários')
 
 @section('content')
-    <div class="bg-white rounded-lg shadow p-4">
+    <div class="bg-white rounded-lg shadow p-6">
         <!-- Campo de busca -->
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-            <form class="w-full sm:w-1/3" action="{{ route('home') }}" method="GET">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-3">
+            <form class="flex items-center gap-2 w-full sm:w-auto" action="{{ route('users.index') }}" method="GET">
                 <div class="relative">
-                    <input type="text" placeholder="Buscar usuário..." name="search" value="{{ request('search') }}"
-                        class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Buscar usuário..."
+                        value="{{ request('search') }}"
+                        class="w-48 sm:w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
                     <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
                         stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M21 21l-4.35-4.35M5 11a6 6 0 1112 0 6 6 0 01-12 0z" />
                     </svg>
                 </div>
+
+                <button type="submit"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Buscar
+                </button>
             </form>
-            <a href="{{ route('users.create') }}" class="btn-form-submit">Adicionar Funcionario</a>
+
+            <a href="{{ route('users.create') }}" class="btn-form-submit">
+                Adicionar
+            </a>
         </div>
 
         <!-- Tabela em telas médias/grandes -->
         <div class="hidden md:block overflow-x-auto">
-            <table class="min-w-full text-sm text-left text-gray-500">
+            <table class="min-w-full text-sm text-left text-gray-600">
                 <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
                     <tr>
                         <th class="px-6 py-3">Nome</th>
@@ -30,32 +43,39 @@
                         <th class="px-6 py-3">Email</th>
                         <th class="px-6 py-3">Cargo</th>
                         <th class="px-6 py-3">Endereço</th>
-                        <th class="px-6 py-3"></th>
+                        <th class="px-6 py-3 text-right">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($employees as $employee)
-                        <tr class="border-b hover:bg-gray-50">
+                    @forelse ($employees as $employee)
+                        <tr class="border-b hover:bg-gray-50 transition">
                             <td class="px-6 py-4">{{ $employee->name }}</td>
                             <td class="px-6 py-4">{{ $employee->document }}</td>
                             <td class="px-6 py-4">{{ $employee->email }}</td>
                             <td class="px-6 py-4">{{ $employee->position }}</td>
                             <td class="px-6 py-4">{{ $employee->fullAddress }}</td>
-                            <td class="px-6 py-4 space-x-2">
+                            <td class="px-6 py-4 text-right space-x-3">
                                 <a href="{{ route('users.edit', $employee->id) }}"
-                                    class="text-blue-500 hover:underline">Editar</a>
-                                <button class="text-red-500 hover:underline"
-                                    onclick="openDeleteModal('{{ route('users.destroy', $employee->id) }}', '{{ $employee->name }}')">
-                                    Excluir
+                                   class="text-blue-500 hover:text-blue-700" title="Editar">
+                                    ✏️
+                                </a>
+                                <button class="text-red-500 hover:text-red-700"
+                                    onclick="openDeleteModal('{{ route('users.destroy', $employee->id) }}', '{{ $employee->name }}')"
+                                    title="Excluir">
+                                    🗑️
                                 </button>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Nenhum funcionário encontrado</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
 
             <div class="mt-4">
-                {{ $employees->links() }}
+                {{ $employees->appends(request()->query())->links() }}
             </div>
         </div>
 
@@ -63,14 +83,14 @@
         <div class="grid grid-cols-1 gap-4 md:hidden">
             @foreach ($employees as $employee)
                 <div class="border rounded-lg p-4 shadow-sm bg-gray-50">
-                    <p class="text-sm text-gray-500">ID: {{ $employee->id }}</p>
                     <p class="font-bold text-gray-900">{{ $employee->name }}</p>
-                    <p class="text-gray-600">{{ $employee->email }}</p>
+                    <p class="text-gray-600 text-sm">{{ $employee->email }}</p>
                     <p class="text-xs text-gray-500 mt-2">Criado em: {{ $employee->created_at->format('d/m/Y') }}</p>
-                    <div class="mt-3 flex gap-3">
-                        <a href="#" class="text-blue-500 hover:underline text-sm">Editar</a>
+                    <div class="mt-3 flex gap-4">
+                        <a href="{{ route('users.edit', $employee->id) }}"
+                           class="text-blue-500 hover:underline text-sm">Editar</a>
                         <button class="text-red-500 hover:underline text-sm"
-                            onclick="openDeleteModal({{ $employee->id }}, '{{ $employee->name }}')">Excluir</button>
+                            onclick="openDeleteModal('{{ route('users.destroy', $employee->id) }}', '{{ $employee->name }}')">Excluir</button>
                     </div>
                 </div>
             @endforeach

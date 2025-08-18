@@ -33,7 +33,7 @@ class MeController extends Controller
         $this->userService->updatePassword(Auth::id(), $request->password);
 
         return redirect()->route('home')
-            ->with('success', __('messages.password_updated_successfully'))
+            ->with('status', __('messages.password_updated_successfully'))
             ->with('status_type', 'success');
     }
 }
